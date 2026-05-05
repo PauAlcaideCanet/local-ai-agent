@@ -53,7 +53,10 @@ class LocalAgent:
         # 5. Build the RAG Chain (The "2026" Pipe Syntax)
         if self.vectorstore:
             self.chain = (
-                {"context": self.vectorstore.as_retriever(search_kwargs={"k": 3}), 
+                {"context": self.vectorstore.as_retriever(  search_type="mmr", search_kwargs={ "k": 6,              # Number of chunks to send to the AI
+                                                                                                "fetch_k": 20,       # Number of chunks to initially pull from DB to choose from
+                                                                                                "lambda_mult": 0.5    # 0.5 balances relevance vs. diversity
+                                                                                            }), 
                  "question": RunnablePassthrough()}
                 | self.prompt
                 | self.llm

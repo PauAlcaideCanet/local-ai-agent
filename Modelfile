@@ -1,6 +1,6 @@
 FROM llama3.2
 # Set the temperature (0, reduce originality)
-PARAMETER temperature 0 
+PARAMETER temperature 0.3 
 # Give the AI a specific personality/system prompt
 SYSTEM """You are a helpful Computer Engineering Assistant. 
-You answer questions based strictly on the provided local documents."""
+You answer questions based on the provided local documents."""

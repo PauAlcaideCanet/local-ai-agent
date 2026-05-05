@@ -2,9 +2,31 @@ from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader, T
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaEmbeddings
 from langchain_community.vectorstores import Chroma
+import shutil
+import os
+
+# Hide specific transformers logs
+from transformers import logging as transformers_logging
+transformers_logging.set_verbosity_error()
 
 def sync_database():
-    # 1. Define how to load different file types
+    
+    embedding_function = OllamaEmbeddings(model="nomic-embed-text")
+    
+    # Connect to the existing database instead of deleting the folder
+    vectorstore = Chroma(
+        persist_directory="./chroma_db", 
+        embedding_function=embedding_function
+    )
+    
+    # Wipe the internal data (this is allowed even if the file is "open")
+    try:
+        vectorstore.delete_collection()
+        print("Collection cleared. Starting fresh...")
+    except Exception as e:
+        print(f"New database or empty collection: {e}")
+    
+    # Define how to load different file types
     loaders = {
         ".pdf": PyPDFLoader,
         ".txt": TextLoader,
@@ -20,7 +42,7 @@ def sync_database():
             show_progress=True
         )
 
-    # 2. Load all documents from the data folder
+    # Load all documents from the data folder
     docs = []
     for ext, loader_cls in loaders.items():
         loader = create_directory_loader(ext, loader_cls)
@@ -30,8 +52,8 @@ def sync_database():
         print("No documents found in /data.")
         return
 
-    # 3. Split and Index (Same as before)
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+    # Split and Index 
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     chunks = text_splitter.split_documents(docs)
     
     vectorstore = Chroma.from_documents(
