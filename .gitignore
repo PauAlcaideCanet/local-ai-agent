@@ -10,4 +10,4 @@ chroma_db/
 
 # 4. Private/Large Data 
 data/*
-!data/.gitkeep
+!data/Test.txt

@@ -5,10 +5,6 @@ from langchain_community.vectorstores import Chroma
 import shutil
 import os
 
-# Hide specific transformers logs
-from transformers import logging as transformers_logging
-transformers_logging.set_verbosity_error()
-
 def sync_database():
     
     embedding_function = OllamaEmbeddings(model="nomic-embed-text")
