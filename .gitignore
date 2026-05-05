@@ -1,12 +1,13 @@
-# --- Python Standard ---
+# 1. The Environment 
 venv/
-.venv/
-env/
+
+# 2. Python Artifacts (Auto-generated "speed-up" files)
 __pycache__/
 *.py[cod]
-*$py.class
-.env
 
+# 3. Local Databases
+chroma_db/
 
-# --- VS Code ---
-.vscode/
+# 4. Private/Large Data 
+data/*
+!data/.gitkeep
